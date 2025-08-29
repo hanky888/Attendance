@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>宏軒仲薇家宴人數統計</title>
+  <style>
+    /* 簡單樣式重現粉紅卡片設計 */
+    :root {
+      --pink-1: #ffd7e6;
+      --pink-2: #f7c0d1;
+      --accent: #e21f4d;
+      --card-bg: #fff;
+      --radius: 12px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+      background: linear-gradient(180deg, var(--pink-1), #fff 40%);
+      padding: 24px;
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    h1.title {
+      color: var(--accent);
+      margin: 0 0 12px;
+      font-size: 22px;
+      text-align: center;
+    }
+    h2 {
+      color: var(--accent);
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    label { 
+      display: block; 
+      margin: 12px 0 6px; 
+      font-weight: 600; 
+      color: #8b2b48; 
+    }
+    input[type="text"], input[type="email"], input[type="number"], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background: #fff;
+      font-size: 14px;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(226, 31, 77, 0.1);
+    }
+    .radio-group { 
+      display: flex; 
+      gap: 12px; 
+      align-items: center; 
+      margin-top: 6px; 
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      font-weight: normal;
+      gap: 6px;
+    }
+    .btn {
+      display: block;
+      background: linear-gradient(180deg, var(--accent), #b10d36);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .muted { 
+      color: #888; 
+      font-size: 13px; 
+      margin-top: 8px;
+    }
+    .status {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.loading {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    /* Album card */
+    .album-empty {
+      border: 2px dashed #f2c9d8;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      color: #c66;
+    }
+    .pa-carousel-widget {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* 響應式設計 */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .card {
+        padding: 12px;
+      }
+      h1.title {
+        font-size: 20px;
+      }
+    }
+  </style>
+  <!-- publicalbum 載入 -->
+  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
+</head>
+<body>
+  <div class="container">
+
+    <h1 class="title">🎉 宏軒仲薇家宴人數統計</h1>
+
+    <!-- 相片集卡片（使用 publicalbum 嵌入 Google Photos 分享相簿） -->
+    <div class="card">
+      <h2>📷 小小花絮</h2>
+      <!-- 如果沒有照片，顯示提示；有照片 publicalbum 會替換顯示 -->
+      <div class="album-empty" id="album-placeholder">
+        <div style="font-size:28px;">📷</div>
+        <p style="margin:8px 0 0;">目前沒有照片可供展示。<br>管理者可在 Google Photos 建立共享相簿並把連結貼到網站上。</p>
+      </div>
+
+      <!-- publicalbum 嵌入語法（把 data-link 換成你的 Google Photos 分享連結） -->
+      <div style="margin-top:12px;">
+        <div class="pa-carousel-widget" style="width:100%; height:480px; display:none;"
+             data-link="https://photos.app.goo.gl/MrS4JA9gjTjm1GdZ6"
+             data-title="宏軒仲薇家宴 📸"
+             data-description="共享相簿 · 點擊查看！">
+          <!-- 內含 <object> 的相片 URL（publicalbum 會自動填充） -->
+        </div>
+      </div>
+    </div>
+
+    <!-- RSVP 表單 -->
+    <div class="card">
+      <h2>📝 回覆 RSVP</h2>
+      <p class="muted">請填寫以下資訊，讓我們知道您是否參加家宴</p>
+      <form id="rsvpForm">
+        <label>姓名 *</label>
+        <input name="name" type="text" placeholder="請輸入您的姓名" required />
+
+        <label>Email</label>
+        <input name="email" type="email" placeholder="例如：name@example.com（用於再次編輯與通知）" />
+
+        <label>是否參加 *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="attend" value="yes" checked /> 是，我會參加</label>
+          <label><input type="radio" name="attend" value="no" /> 不，我無法參加</label>
+        </div>
+
+        <label>出席人數 *</label>
+        <input name="num_people" type="number" min="1" max="20" value="1" required />
+        <p class="muted">包含您本人在內的總人數</p>
+
+        <label>備註（選填）</label>
+        <textarea name="note" rows="3" placeholder="例如：是否攜帶小朋友、飲食限制、交通安排等"></textarea>
+
+        <button class="btn" type="submit" id="submitBtn">送出回覆</button>
+        <div id="formStatus"></div>
+      </form>
+    </div>
+
+    <!-- 統計資訊卡片 -->
+    <div class="card" id="statsCard" style="display: none;">
+      <h2>📊 目前統計</h2>
+      <div id="statsContent">
+        <p class="muted">載入中...</p>
+      </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, var(--pink-1), var(--pink-2));">
+      <p style="margin: 0; color: var(--accent); font-weight: 600;">
+        💝 期待與您共度美好時光！
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    // 已配置您的 Apps Script Web App URL 和 Secret Token
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz0wuk7Rl8iVd6ox54mFERkPJGSazPeoM32sZx4X2ybOlHd0eG8cwvaMoBsR2o2Tn8/exec?token=rsvp_secret_2025_aB9kL3mN7qR4tW8xY2zA5fH6jK9nP3sV1xC7eG2mQ8vR4tY7zB9kL3nP6sW1xY4zA7fH9jK2mQ5tR8vB1xC4eG7j";
+
+    const form = document.getElementById('rsvpForm');
+    const statusEl = document.getElementById('formStatus');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 表單提交處理
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // 檢查是否設定了正確的 URL
+      if (WEBAPP_URL.includes('YOUR_DEPLOY_ID') || WEBAPP_URL.includes('YOUR_SECRET_TOKEN')) {
+        showStatus('請先設定 Google Apps Script 的部署 URL 和密鑰', 'error');
+        return;
+      }
+
+      showStatus('正在送出...', 'loading');
+      submitBtn.disabled = true;
+
+      const data = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        attend: form.attend.value,
+        num_people: parseInt(form.num_people.value),
+        note: form.note.value.trim()
+      };
+
+      try {
+        const res = await fetch(WEBAPP_URL, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const responseText = await res.text();
+        let result;
+        
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          throw new Error('伺服器回應格式錯誤');
+        }
+
+        if (result.status === 'ok') {
+          showStatus('✅ 送出成功，謝謝您的回覆！', 'success');
+          form.reset();
+          
+          // 3秒後載入統計資訊
+          setTimeout(() => {
+            loadStats();
+          }, 3000);
+        } else {
+          showStatus('❌ 送出失敗：' + (result.error || '未知錯誤'), 'error');
+        }
+      } catch (err) {
+        console.error('Form submission error:', err);
+        showStatus('❌ 網路錯誤：' + err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // 顯示狀態訊息
+    function showStatus(message, type) {
+      statusEl.innerHTML = `<div class="status ${type}">${message}</div>`;
+      if (type === 'success') {
+        setTimeout(() => {
+          statusEl.innerHTML = '';
+        }, 5000);
+      }
+    }
+
+    // 載入統計資訊（可選功能）
+    async function loadStats() {
+      try {
+        const statsUrl = WEBAPP_URL.replace('?token=', '?action=list&token=');
+        const res = await fetch(statsUrl);
+        const data = await res.json();
+        
+        if (Array.isArray(data)) {
+          displayStats(data);
+        }
+      } catch (err) {
+        console.log('無法載入統計資訊：', err.message);
+      }
+    }
+
+    // 顯示統計資訊
+    function displayStats(responses) {
+      const totalResponses = responses.length;
+      const attendingCount = responses.filter(r => r.attend === 'yes').length;
+      const totalPeople = responses
+        .filter(r => r.attend === 'yes')
+        .reduce((sum, r) => sum + (parseInt(r.num_people) || 0), 0);
+
+      const statsContent = document.getElementById('statsContent');
+      statsContent.innerHTML = `
+        <p><strong>總回覆數：</strong>${totalResponses} 人</p>
+        <p><strong>確定參加：</strong>${attendingCount} 人</p>
+        <p><strong>預計出席總人數：</strong>${totalPeople} 人</p>
+      `;
+      
+      document.getElementById('statsCard').style.display = 'block';
+    }
+
+    // publicalbum 初始化：當 script 載入完會找 .pa-carousel-widget，若有相簿會顯示並隱藏 placeholder
+    window.addEventListener('pa-widget-ready', function(e) {
+      // publicalbum 成功載入 widget 後會觸發此事件（若無，則不會）
+      const placeholder = document.getElementById('album-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+      // 顯示 widget
+      const widget = document.querySelector('.pa-carousel-widget');
+      if (widget) widget.style.display = 'block';
+    });
+
+    // 頁面載入完成後嘗試載入統計資訊（如果需要）
+    window.addEventListener('DOMContentLoaded', function() {
+      // 可以在這裡添加初始化邏輯
+    });
+  </script>
+</body>
+</html>
