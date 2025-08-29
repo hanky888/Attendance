@@ -305,40 +305,33 @@
       };
 
       try {
-        console.log('Submitting data:', data);
-        console.log('Request URL:', WEBAPP_URL);
+        console.log('Submitting data via JSONP:', data);
         
-        const res = await fetch(WEBAPP_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-
-        console.log('Response status:', res.status);
-        console.log('Response headers:', [...res.headers.entries()]);
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-
-        const responseText = await res.text();
-        console.log('Response text:', responseText);
+        // 使用 JSONP 方法避免 CORS 問題
+        submitViaJSONP(data);
         
-        let result;
-        try {
-          result = JSON.parse(responseText);
-        } catch (parseError) {
-          console.error('JSON Parse error:', parseError);
-          throw new Error('伺服器回應格式錯誤：' + responseText.substring(0, 100));
-        }
+      } catch (err) {
+        console.error('Form submission error:', err);
+        showStatus('❌ 提交錯誤：' + err.message, 'error');
+        submitBtn.disabled = false;
+      }
+    });
 
-        console.log('Parsed result:', result);
-
-        if (result.success || result.status === 'ok') {
+    // JSONP 提交函數
+    function submitViaJSONP(data) {
+      // 建立唯一的 callback 函數名稱
+      const callbackName = 'rsvpCallback_' + Date.now();
+      
+      // 建立全域 callback 函數
+      window[callbackName] = function(response) {
+        console.log('JSONP Response:', response);
+        
+        // 清理
+        document.head.removeChild(script);
+        delete window[callbackName];
+        
+        // 處理回應
+        if (response.success) {
           showStatus('✅ 送出成功，謝謝您的回覆！', 'success');
           form.reset();
           
@@ -347,22 +340,62 @@
             loadStats();
           }, 3000);
         } else {
-          showStatus('❌ 送出失敗：' + (result.error || result.message || '未知錯誤'), 'error');
-        }
-      } catch (err) {
-        console.error('Form submission error:', err);
-        console.error('Error stack:', err.stack);
-        
-        let errorMessage = err.message;
-        if (err.name === 'TypeError' && err.message.includes('fetch')) {
-          errorMessage = 'CORS 或網路連接錯誤。請檢查 Apps Script 部署設定。';
+          showStatus('❌ 送出失敗：' + (response.error || response.message || '未知錯誤'), 'error');
         }
         
-        showStatus('❌ 網路錯誤：' + errorMessage, 'error');
-      } finally {
         submitBtn.disabled = false;
-      }
-    });
+      };
+      
+      // 建構 URL 參數
+      const params = new URLSearchParams({
+        action: 'submit',
+        callback: callbackName,
+        token: 'rsvp_secret_2025_aB9kL3mN7qR4tW8xY2zA5fH6jK9nP3sV1xC7eG2mQ8vR4tY7zB9kL3nP6sW1xY4zA7fH9jK2mQ5tR8vB1xC4eG7j',
+        name: data.name,
+        email: data.email,
+        attend: data.attend,
+        num_people: data.num_people,
+        note: data.note
+      });
+      
+      // 建立 script 標籤
+      const script = document.createElement('script');
+      script.src = `https://script.google.com/macros/s/AKfycbz0wuk7Rl8iVd6ox54mFERkPJGSazPeoM32sZx4X2ybOlHd0eG8cwvaMoBsR2o2Tn8/exec?${params.toString()}`;
+      
+      // 錯誤處理
+      script.onerror = function() {
+        console.error('JSONP request failed');
+        showStatus('❌ 網路連接失敗，請稍後再試', 'error');
+        submitBtn.disabled = false;
+        
+        // 清理
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
+        if (window[callbackName]) {
+          delete window[callbackName];
+        }
+      };
+      
+      // 超時處理
+      setTimeout(() => {
+        if (window[callbackName]) {
+          console.error('JSONP request timeout');
+          showStatus('❌ 請求超時，請稍後再試', 'error');
+          submitBtn.disabled = false;
+          
+          // 清理
+          if (document.head.contains(script)) {
+            document.head.removeChild(script);
+          }
+          delete window[callbackName];
+        }
+      }, 15000); // 15秒超時
+      
+      // 執行請求
+      document.head.appendChild(script);
+      console.log('JSONP request sent:', script.src);
+    }
 
     // 顯示狀態訊息
     function showStatus(message, type) {
@@ -374,19 +407,43 @@
       }
     }
 
-    // 載入統計資訊（可選功能）
-    async function loadStats() {
-      try {
-        const statsUrl = WEBAPP_URL.replace('?token=', '?action=list&token=');
-        const res = await fetch(statsUrl);
-        const data = await res.json();
+    // 載入統計資訊（使用 JSONP）
+    function loadStats() {
+      const callbackName = 'statsCallback_' + Date.now();
+      
+      window[callbackName] = function(data) {
+        console.log('Stats JSONP Response:', data);
+        
+        // 清理
+        document.head.removeChild(script);
+        delete window[callbackName];
         
         if (Array.isArray(data)) {
           displayStats(data);
         }
-      } catch (err) {
-        console.log('無法載入統計資訊：', err.message);
-      }
+      };
+      
+      const params = new URLSearchParams({
+        action: 'list',
+        callback: callbackName,
+        token: 'rsvp_secret_2025_aB9kL3mN7qR4tW8xY2zA5fH6jK9nP3sV1xC7eG2mQ8vR4tY7zB9kL3nP6sW1xY4zA7fH9jK2mQ5tR8vB1xC4eG7j',
+        limit: '50'
+      });
+      
+      const script = document.createElement('script');
+      script.src = `https://script.google.com/macros/s/AKfycbz0wuk7Rl8iVd6ox54mFERkPJGSazPeoM32sZx4X2ybOlHd0eG8cwvaMoBsR2o2Tn8/exec?${params.toString()}`;
+      
+      script.onerror = function() {
+        console.log('無法載入統計資訊：網路錯誤');
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
+        if (window[callbackName]) {
+          delete window[callbackName];
+        }
+      };
+      
+      document.head.appendChild(script);
     }
 
     // 顯示統計資訊
