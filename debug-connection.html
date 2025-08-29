@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>連接診斷工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Google Apps Script 連接診斷工具</h1>
+    
+    <div class="info-box">
+        <strong>目前設定的 URL：</strong><br>
+        <code id="currentUrl">載入中...</code>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 檢查清單</h2>
+        <div id="checklist">
+            <div>✅ 確認您已經將 Code.gs 複製到 Google Apps Script</div>
+            <div>✅ 確認您已經啟用以下 API 服務：Google Sheets API, Gmail API, Google Calendar API</div>
+            <div>✅ 確認您已經將 Apps Script 部署為「網頁應用程式」</div>
+            <div>✅ 確認權限設定為「任何人」可以存取</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 基本連接測試</h2>
+        <button onclick="testBasicConnection()">測試基本連接</button>
+        <div id="basicResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 Token 驗證測試</h2>
+        <button onclick="testTokenValidation()">測試 Token</button>
+        <div id="tokenResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 表單提交測試</h2>
+        <button onclick="testFormSubmission()">測試表單提交</button>
+        <div id="formResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 統計資料測試</h2>
+        <button onclick="testStatsRetrieval()">測試統計資料</button>
+        <div id="statsResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🛠️ 修復建議</h2>
+        <div id="suggestions"></div>
+    </div>
+
+    <script>
+        // 從主頁面複製的 URL
+        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz0wuk7Rl8iVd6ox54mFERkPJGSazPeoM32sZx4X2ybOlHd0eG8cwvaMoBsR2o2Tn8/exec?token=rsvp_secret_2025_aB9kL3mN7qR4tW8xY2zA5fH6jK9nP3sV1xC7eG2mQ8vR4tY7zB9kL3nP6sW1xY4zA7fH9jK2mQ5tR8vB1xC4eG7j";
+
+        // 顯示目前的 URL
+        document.getElementById('currentUrl').textContent = WEBAPP_URL;
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showSuggestion(message) {
+            const suggestions = document.getElementById('suggestions');
+            suggestions.innerHTML += `<div class="warning">${message}</div>`;
+        }
+
+        async function testBasicConnection() {
+            showResult('basicResult', '正在測試基本連接...', 'loading');
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超時
+                
+                const response = await fetch(WEBAPP_URL, {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    const text = await response.text();
+                    showResult('basicResult', `✅ 基本連接成功！狀態碼: ${response.status}<br>回應: ${text.substring(0, 200)}...`, 'success');
+                } else {
+                    showResult('basicResult', `❌ 連接失敗！狀態碼: ${response.status}<br>狀態文字: ${response.statusText}`, 'error');
+                    showSuggestion('請檢查 Apps Script 是否正確部署為網頁應用程式，並且權限設定為「任何人」可存取。');
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    showResult('basicResult', '❌ 連接超時（超過10秒）', 'error');
+                    showSuggestion('連接超時通常表示 URL 不正確或 Apps Script 服務無回應。請檢查部署 URL。');
+                } else {
+                    showResult('basicResult', `❌ 連接錯誤: ${error.message}`, 'error');
+                    if (error.message.includes('Failed to fetch')) {
+                        showSuggestion('「Failed to fetch」錯誤通常表示：<br>1. CORS 問題<br>2. 網路連接問題<br>3. Apps Script 未正確部署<br>4. URL 不正確');
+                    }
+                }
+            }
+        }
+
+        async function testTokenValidation() {
+            showResult('tokenResult', '正在測試 Token 驗證...', 'loading');
+            
+            try {
+                const response = await fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        test: true,
+                        name: 'Test User'
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.error && result.error.includes('token')) {
+                        showResult('tokenResult', `❌ Token 驗證失敗: ${result.error}`, 'error');
+                        showSuggestion('Token 不匹配！請確認 Code.gs 中的 SECRET_TOKEN 與 URL 中的 token 參數一致。');
+                    } else {
+                        showResult('tokenResult', '✅ Token 驗證通過！', 'success');
+                    }
+                } else {
+                    showResult('tokenResult', `❌ HTTP 錯誤: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showResult('tokenResult', `❌ Token 測試錯誤: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFormSubmission() {
+            showResult('formResult', '正在測試表單提交...', 'loading');
+            
+            const testData = {
+                name: '測試用戶',
+                email: 'test@example.com',
+                attend: 'yes',
+                num_people: 1,
+                note: '這是一個測試提交'
+            };
+
+            try {
+                const response = await fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showResult('formResult', `✅ 表單提交成功！<br>回應: ${JSON.stringify(result, null, 2)}`, 'success');
+                } else {
+                    const text = await response.text();
+                    showResult('formResult', `❌ 表單提交失敗: ${response.status}<br>回應: ${text}`, 'error');
+                }
+            } catch (error) {
+                showResult('formResult', `❌ 表單提交錯誤: ${error.message}`, 'error');
+            }
+        }
+
+        async function testStatsRetrieval() {
+            showResult('statsResult', '正在測試統計資料檢索...', 'loading');
+            
+            try {
+                const statsUrl = WEBAPP_URL.replace('?token=', '?action=list&token=');
+                const response = await fetch(statsUrl);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showResult('statsResult', `✅ 統計資料檢索成功！<br>資料筆數: ${Array.isArray(result) ? result.length : '未知'}`, 'success');
+                } else {
+                    showResult('statsResult', `❌ 統計資料檢索失敗: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                showResult('statsResult', `❌ 統計資料檢索錯誤: ${error.message}`, 'error');
+            }
+        }
+
+        // 頁面載入時自動顯示一些基本資訊
+        window.addEventListener('DOMContentLoaded', function() {
+            // 檢查 URL 格式
+            if (!WEBAPP_URL.includes('script.google.com/macros/s/') || !WEBAPP_URL.includes('/exec')) {
+                showSuggestion('⚠️ URL 格式可能不正確。正確的 Apps Script Web App URL 應該類似於：<br><code>https://script.google.com/macros/s/[DEPLOY_ID]/exec?token=[TOKEN]</code>');
+            }
+            
+            // 檢查 Token 長度
+            const urlParams = new URLSearchParams(WEBAPP_URL.split('?')[1]);
+            const token = urlParams.get('token');
+            if (!token || token.length < 20) {
+                showSuggestion('⚠️ Token 看起來太短或不存在。建議使用至少20字符的隨機字串作為安全 token。');
+            }
+        });
+    </script>
+</body>
+</html>
