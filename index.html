@@ -151,8 +151,8 @@
       }
     }
   </style>
-  <!-- publicalbum 載入 -->
-  <script src="https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js" async></script>
+  <!-- publicalbum 載入 - 使用更穩定的 CDN -->
+  <script src="https://unpkg.com/publicalbum@latest/embed-ui.min.js" async></script>
 </head>
 <body>
   <div class="container">
@@ -242,8 +242,8 @@
 
         <label>是否參加 *</label>
         <div class="radio-group">
-          <label><input type="radio" name="attend" value="yes" checked /> 是，我會參加</label>
-          <label><input type="radio" name="attend" value="no" /> 不，我無法參加</label>
+          <label><input type="radio" name="attend" value="參加" checked /> 是，我會參加</label>
+          <label><input type="radio" name="attend" value="不參加" /> 不，我無法參加</label>
         </div>
 
         <label>出席人數 *</label>
@@ -305,25 +305,40 @@
       };
 
       try {
+        console.log('Submitting data:', data);
+        console.log('Request URL:', WEBAPP_URL);
+        
         const res = await fetch(WEBAPP_URL, {
           method: 'POST',
-          headers: { 
+          mode: 'cors',
+          headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
           body: JSON.stringify(data)
         });
 
+        console.log('Response status:', res.status);
+        console.log('Response headers:', [...res.headers.entries()]);
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
         const responseText = await res.text();
-        let result;
+        console.log('Response text:', responseText);
         
+        let result;
         try {
           result = JSON.parse(responseText);
         } catch (parseError) {
-          throw new Error('伺服器回應格式錯誤');
+          console.error('JSON Parse error:', parseError);
+          throw new Error('伺服器回應格式錯誤：' + responseText.substring(0, 100));
         }
 
-        if (result.status === 'ok') {
+        console.log('Parsed result:', result);
+
+        if (result.success || result.status === 'ok') {
           showStatus('✅ 送出成功，謝謝您的回覆！', 'success');
           form.reset();
           
@@ -332,11 +347,18 @@
             loadStats();
           }, 3000);
         } else {
-          showStatus('❌ 送出失敗：' + (result.error || '未知錯誤'), 'error');
+          showStatus('❌ 送出失敗：' + (result.error || result.message || '未知錯誤'), 'error');
         }
       } catch (err) {
         console.error('Form submission error:', err);
-        showStatus('❌ 網路錯誤：' + err.message, 'error');
+        console.error('Error stack:', err.stack);
+        
+        let errorMessage = err.message;
+        if (err.name === 'TypeError' && err.message.includes('fetch')) {
+          errorMessage = 'CORS 或網路連接錯誤。請檢查 Apps Script 部署設定。';
+        }
+        
+        showStatus('❌ 網路錯誤：' + errorMessage, 'error');
       } finally {
         submitBtn.disabled = false;
       }
@@ -370,9 +392,11 @@
     // 顯示統計資訊
     function displayStats(responses) {
       const totalResponses = responses.length;
-      const attendingCount = responses.filter(r => r.attend === 'yes').length;
+      const attendingCount = responses.filter(r =>
+        r.attend === '參加' || r.attend === 'Yes' || r.attend === 'yes'
+      ).length;
       const totalPeople = responses
-        .filter(r => r.attend === 'yes')
+        .filter(r => r.attend === '參加' || r.attend === 'Yes' || r.attend === 'yes')
         .reduce((sum, r) => sum + (parseInt(r.num_people) || 0), 0);
 
       const statsContent = document.getElementById('statsContent');
