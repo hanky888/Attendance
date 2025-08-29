@@ -15,7 +15,10 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
-      background: linear-gradient(180deg, var(--pink-1), #fff 40%);
+      background:
+        linear-gradient(180deg, rgba(255, 215, 230, 0.85), rgba(255, 255, 255, 0.85) 40%),
+        url('./lovepik.png') repeat fixed;
+      background-size: 150px auto;
       padding: 24px;
       color: #333;
       min-height: 100vh;
@@ -154,24 +157,74 @@
 <body>
   <div class="container">
 
-    <h1 class="title">🎉 宏軒仲薇家宴人數統計</h1>
+    <h1 class="title">🎉 宏軒仲薇敬邀參加家宴</h1>
+
+    <!-- 婚宴邀請資訊卡片 -->
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, var(--pink-1), #fff9fc);">
+      <h2 style="color: var(--accent); margin-bottom: 16px;">💕 喜帖</h2>
+      
+      <div style="line-height: 1.8; color: #5d1a2e; font-size: 15px;">
+        <p style="margin: 8px 0; font-weight: 600;">謹訂於民國114年11月29日</p>
+        <p style="margin: 8px 0;">（星期六，農曆甲辰年十月廿九日）</p>
+        <p style="margin: 8px 0; font-weight: 600; color: var(--accent);">舉行家宴</p>
+        
+        <div style="margin: 16px 0; padding: 12px; background: rgba(255, 255, 255, 0.7); border-radius: 8px;">
+          <p style="margin: 4px 0;"><strong>新郎：</strong>林宏軒 先生</p>
+          <p style="margin: 4px 0;"><strong>新娘：</strong>陳仲薇 小姐</p>
+        </div>
+        
+        <div style="margin: 16px 0; text-align: left; background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 8px;">
+          <p style="margin: 4px 0;"><strong>🏢 宴客地點：</strong>驥園川菜餐廳</p>
+          <p style="margin: 4px 0;"><strong>🕐 宴客時間：</strong>中午12時00分入席</p>
+          <p style="margin: 4px 0;"><strong>📍 地址：</strong>106台北市大安區敦化南路1段324號</p>
+          <p style="margin: 8px 0 4px;"><strong>🗺️ 餐廳位置：</strong></p>
+          <a href="https://share.google/7VAaVfcyfAggRWBpj" target="_blank"
+             style="color: var(--accent); text-decoration: none; font-weight: 600;
+                    display: inline-block; padding: 6px 12px; background: rgba(226, 31, 77, 0.1);
+                    border-radius: 6px; transition: background 0.2s;"
+             onmouseover="this.style.background='rgba(226, 31, 77, 0.2)'"
+             onmouseout="this.style.background='rgba(226, 31, 77, 0.1)'">
+            🌐 Google 地圖位置
+          </a>
+        </div>
+        
+        <p style="margin: 16px 0 8px; font-weight: 600; color: var(--accent); font-size: 16px;">
+          誠摯邀請闔府光臨
+        </p>
+        <p style="margin: 0; font-size: 13px; color: #888;">敬邀</p>
+      </div>
+    </div>
 
     <!-- 相片集卡片（使用 publicalbum 嵌入 Google Photos 分享相簿） -->
     <div class="card">
       <h2>📷 小小花絮</h2>
-      <!-- 如果沒有照片，顯示提示；有照片 publicalbum 會替換顯示 -->
-      <div class="album-empty" id="album-placeholder">
-        <div style="font-size:28px;">📷</div>
-        <p style="margin:8px 0 0;">目前沒有照片可供展示。<br>管理者可在 Google Photos 建立共享相簿並把連結貼到網站上。</p>
-      </div>
-
-      <!-- publicalbum 嵌入語法（把 data-link 換成你的 Google Photos 分享連結） -->
+      
+      <!-- publicalbum 嵌入語法 -->
       <div style="margin-top:12px;">
-        <div class="pa-carousel-widget" style="width:100%; height:480px; display:none;"
+        <div class="pa-carousel-widget" style="width:100%; height:480px; display:block;"
              data-link="https://photos.app.goo.gl/MrS4JA9gjTjm1GdZ6"
-             data-title="宏軒仲薇家宴 📸"
+             data-title="📸"
              data-description="共享相簿 · 點擊查看！">
-          <!-- 內含 <object> 的相片 URL（publicalbum 會自動填充） -->
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczPCx3Aef4tlt6doIKqPjTFgL02eNmzS8YyK9gwqzwTPkQC-xCec5dkGmnjNOJ4sCMSmMaR9zs3ulCrdT27s7DTrFdDFROGA2_AULxT20DznGCGMNRYw=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczNN08ulSwp0nniWIvgVBupota5KZY2xVf7eu8Ujtj5Pyn5759UMtYndbO_YHGzpzcwRk1DgCvTvxhxaDYefDjPaNMxZN8BaFXHJVLUa0qWLTQSsiOn0=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczPoarRfqi4BE1yBHzbR1yqIwleLxg9zQvpw9AUgGpIXWISrx1N6bmoWonKyKz61jqbsv-flDFu4j06BoKPwae7FgllS4NFx0K-R83EDsqno0wTGsz_p=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczNwuYAA8V1YCRW6K_IhNn8reutu1uRxksSJAh6LUra650D3ft0JXVP25Ep_xdhcfLCA2YP5-e-RureG5-tBGvVpYBW_lek8GjkRU8o49vZzxRiX7Zz5=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMSerFzBr82GcfU9jlDOM05bLesU8O6Tkww78XYFedC-aKkZd1HRqktykhUSo6pWEwnyzxCvvZBUO4YMVICmgkID4SzM-UuJ0KTHi2hNT1AwI7BeT7v=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczPPZkOLWQAgTfI7whgFk-gS3MuW3YYfdgL6-GMOS-YmycaGgS3kDLE8II9TDNB7MUUktYw7ytxLyDs5xDafyjAuJxywU-tjyO3aNTvOXEx7RdW4p1N8=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczN7UzwwsmHfxfOofyzfmSVb_91H6gjyEj_A_Iy8-9M2D7Eqz4Ouaqczv-BEqc9eHLvKd8sJocaxCDtugfGxmoOFbY2nFoPwgbz_QI1JKovWZwfa2MrR=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMoilzWhylQIwkGezZTb5Ad1qDBgzd0SsvQCoXD6iv6YHlLx4OpmjoYo140D05ZeJxDq2xDMLiBgEcYWIQdmmqxrrT7Qc1HgDVft76cHuOriyS2d5-g=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczOdY16WOFBoEV83ckQ6ypVxeAAir-ZoA7pNkLWc25YQV3lUJ-0kpmxRoChA-6hBa1DKlV_XYL7InbxRxcH9Rcytl5nwoNE_xtORZHptkE2G1vVd8rmk=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczN2r-TwTesv_hqfJTRh9VM49yMLziVzAXd6HX1o6XEk-ZOeEJpcZJaZLAlCuQB_s9q9nljbUnELJSo9X_OUtkPtQxG7qeG-EwL5DWEOYvFd--nH00JZ=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczO4DVUUM3scbAMomT5wMTTdr2azItYWg9036FbsER7TZNCU-o5hX4cr5LDAIf2-JLgK2De6svLbHpBYbgzrJIe6lI3z4Fwy-AKZ1Vjnpt5wNR1cmAhA=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMZEEsSZgLmmmSYkDFTGtJZ7fTDJfesTL2kjoZKGC61rpciUXE2iFZT9OSwU0kRGmdKA1z0yRRd4PLCp_wtBwmi7pTdm5f6rkOauHWaC3k5wK8ODPVu=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMZ_ONLZD_DmUbsHF0yQhhS-Q8q5dsWRA5v2lLr1JCLLGwcqieUDmNskc6o2761Oj0HIoZ-7RsG2m53a72s7HrkawVArt-v_QiKnIJ3qUExmHWE-MEx=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMQ9eCYAYee9U5jNwrvMNhjPC6OxyVTEtDZ_KGv94SZ7wSgF9xtclodGhOnracOFgQlmdWHErJH_6FSUU3lpYlpwtF7P_IHoHV4IBBfGihTZ6hOacyn=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczNLo1oW_s-sUxBcao33cX361Uy3tpNAg2JEb5xF7xyIUZE1qESph3SM0pwhL-g1UijupLLRzinCu2_Fwif7OMKidyjRxkLbhcGh6nwKovFWht3A10u6=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMGIxI2ABIajVjs-XQOYmfgl3YyS29E5YO1da6bXoAse7-F_kvTzKySAM7hCWQM_QWLYkiAit_U4ufyuWFl5uSQ0oPN1fJY7JAIaloRaQftGMyhccz5=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczPeakDtHrjRJDmB5BaNcORIZ9ClYQbPTg7Dq4DctuyMBsFIB2wFuNLEp8bcynQ2Tai7j-H8Pg6ZriDQ3JRQd433gxlz56zyxVozmEsW6GgEZQD0Woia=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczMXUVabb185AGIdYLQdh8UX--ajNwQ8x8ZA66L27grzaQSTB3QDH64w070Bpq3C9V1MHa1zQVc7dsdaR0qwFhPwWYkVAKA8Ez1UIxF_aiSyKU1EejTx=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczPB3Zo67PTl3ta3OKlzJ_4cy8qaDd1ul7pBy-V6h07LLsERMtIn93fYqbM3MM6MsbWtBnI7uN8p66yD0AlCabDIE2mw7F8DwfbMDKXJud93vh5U_t-F=w1920-h1080"></object>
+          <object data="https://lh3.googleusercontent.com/pw/AP1GczNIGMej80GKCgfu9HqZARpggK1hyiInOEj4PKGijTqHTCUOH0sRkv0yjMRedHlIyvkHtcsPNOpyBjJ035QSrkxaomxQF5A5bNMZ6NAENU7eHXUKcw_w=w1920-h1080"></object>
         </div>
       </div>
     </div>
@@ -332,14 +385,10 @@
       document.getElementById('statsCard').style.display = 'block';
     }
 
-    // publicalbum 初始化：當 script 載入完會找 .pa-carousel-widget，若有相簿會顯示並隱藏 placeholder
+    // publicalbum 初始化：相簿現在會直接顯示
     window.addEventListener('pa-widget-ready', function(e) {
-      // publicalbum 成功載入 widget 後會觸發此事件（若無，則不會）
-      const placeholder = document.getElementById('album-placeholder');
-      if (placeholder) placeholder.style.display = 'none';
-      // 顯示 widget
-      const widget = document.querySelector('.pa-carousel-widget');
-      if (widget) widget.style.display = 'block';
+      // publicalbum 成功載入 widget 後會觸發此事件
+      console.log('相簿已載入完成');
     });
 
     // 頁面載入完成後嘗試載入統計資訊（如果需要）
